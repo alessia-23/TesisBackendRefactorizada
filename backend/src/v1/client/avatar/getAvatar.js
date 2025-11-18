@@ -4,40 +4,19 @@ import fs from "fs";
 
 export async function getAvatar(req, res) {
     try {
-        // Datos recibidos desde el frontend o Postman
         const { style = "adventurer", seed = "alessia" } = req.body;
-
-        // URL según la documentación oficial
         const url = `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}`;
 
-        // Llamada a la API para obtener el avatar
         const response = await axios.get(url, { responseType: "text" });
 
-        // 🧩 Ruta absoluta donde se guardará el archivo (por ejemplo: /uploads/avatars)
-        const folderPath = path.resolve("uploads/avatars");
-        const filePath = path.join(folderPath, `${seed}.svg`);
+        res.setHeader("Content-Type", "image/svg+xml");
+        return res.status(200).send(response.data);
 
-        // Si la carpeta no existe, la crea
-        if (!fs.existsSync(folderPath)) {
-            fs.mkdirSync(folderPath, { recursive: true });
-        }
-
-        // Guarda el archivo en el servidor
-        fs.writeFileSync(filePath, response.data, "utf8");
-
-        console.log(`✅ Avatar guardado en: ${filePath}`);
-
-        // También puedes devolver la URL del archivo guardado
-        res.status(200).json({
-            msg: "✅ Avatar generado y guardado correctamente",
-            file: `/avatars/${seed}.svg`
-        });
-
-    } catch (error) {
-        console.error("❌ Error al obtener avatar:", error.message);
+    } catch (err) {
         res.status(500).json({ msg: "Error al generar avatar" });
     }
 }
+
 /**
  * Controlador para listar todos los avatares guardados
  */
