@@ -1,4 +1,5 @@
 import { sendMailToRegister, sendMailToRecoveryPassword, sendMailChangePasswordConfirm } from "../../core/helpers/mail/sendMail.js";
+import { crearTokenJWT } from "../../core/middleware/JWT.js";
 import Usuario from "../../core/model/Usuario.js";
 
 const registro = async (req, res) => {
@@ -133,7 +134,9 @@ const login = async (req, res) => {
         const verificarPassword = await UsuarioBDD.matchPassword(password)
         if (!verificarPassword) return res.status(401).json({ msg: "El password no es correcto" })
         const { nombre, apellido, direccion, telefono, _id, rol } = UsuarioBDD
+        const token = crearTokenJWT(UsuarioBDD._id, UsuarioBDD.rol, UsuarioBDD.email)
         res.status(200).json({
+            token,
             rol,
             nombre,
             apellido,
