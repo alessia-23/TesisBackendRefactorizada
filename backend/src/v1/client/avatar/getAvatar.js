@@ -1,10 +1,13 @@
 import axios from "axios";
-import path from "path";
-import fs from "fs";
 
+/**
+ * Genera un avatar desde DiceBear y lo devuelve directamente
+ * SIN guardar el archivo.
+ */
 export async function getAvatar(req, res) {
     try {
         const { style = "adventurer", seed = "alessia" } = req.body;
+
         const url = `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}`;
 
         const response = await axios.get(url, { responseType: "text" });
@@ -13,42 +16,25 @@ export async function getAvatar(req, res) {
         return res.status(200).send(response.data);
 
     } catch (err) {
+        console.error(err);
         res.status(500).json({ msg: "Error al generar avatar" });
     }
 }
 
+
 /**
- * Controlador para listar todos los avatares guardados
+ * YA NO SE GUARDAN AVATARES, así que esta función devuelve una lista vacía.
  */
 export async function listAvatars(req, res) {
-    try {
-        const folderPath = path.resolve("uploads/avatars");
-
-        // Si la carpeta no existe, devolver lista vacía
-        if (!fs.existsSync(folderPath)) {
-            return res.status(200).json({ avatars: [] });
-        }
-
-        // Leer todos los archivos .svg en la carpeta
-        const files = fs.readdirSync(folderPath).filter(file => file.endsWith(".svg"));
-
-        // Generar URLs accesibles desde el navegador
-        const avatars = files.map(file => ({
-            name: file,
-            url: `${req.protocol}://${req.get("host")}/avatars/${file}`
-        }));
-
-        res.status(200).json({ count: avatars.length, avatars });
-
-    } catch (error) {
-        console.error("❌ Error al listar avatares:", error.message);
-        res.status(500).json({ msg: "Error al listar avatares" });
-    }
+    return res.status(200).json({
+        count: 0,
+        avatars: []
+    });
 }
+
 
 /**
  * Lista de estilos disponibles en DiceBear v9
- * Documentación: https://www.dicebear.com/styles/
  */
 export async function listAvatarStyles(req, res) {
     try {
@@ -73,29 +59,19 @@ export async function listAvatarStyles(req, res) {
         ];
 
         res.status(200).json({ count: styles.length, styles });
+
     } catch (error) {
-        console.error("❌ Error al listar estilos:", error.message);
+        console.error(error);
         res.status(500).json({ msg: "Error al listar estilos de avatar" });
     }
 }
 
+
+/**
+ * Como ya NO hay archivos en el servidor, este endpoint solo informa error.
+ */
 export async function serveAvatar(req, res) {
-    try {
-        const { filename } = req.params;
-        const filePath = path.resolve(`uploads/avatars/${filename}`);
-
-        // Verificamos si el archivo existe
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({ msg: "Avatar no encontrado" });
-        }
-
-        // Establecemos el encabezado para SVG
-        res.setHeader("Content-Type", "image/svg+xml");
-
-        // Enviamos el archivo
-        res.sendFile(filePath);
-    } catch (error) {
-        console.error("❌ Error al servir avatar:", error.message);
-        res.status(500).json({ msg: "Error al servir el avatar" });
-    }
+    return res.status(404).json({
+        msg: "Este servidor no almacena avatares. Genera uno con /getAvatar."
+    });
 }
