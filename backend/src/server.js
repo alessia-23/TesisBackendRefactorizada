@@ -1,9 +1,9 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
-import usuarioRoutes from './api/v1/routes/usuario_routes.js'
-import avatarRoutes from './api/v1/routes/avatar_routes.js'
-import dogsRoutes from './api/v1/routes/dog_fact_routes.js'
+import usuarioRoutes from './v1/routes/usuario_routes.js'
+import avatarRoutes from './v1/routes/avatar_routes.js'
+import dogsRoutes from './v1/routes/dog_fact_routes.js'
 
 
 // Inicializaciones

@@ -1,5 +1,5 @@
-import { sendMailToRegister, sendMailToRecoveryPassword, sendMailChangePasswordConfirm } from "../../../core/helpers/mail/sendMail.js";
-import Usuario from "../../../core/model/Usuario.js";
+import { sendMailToRegister, sendMailToRecoveryPassword, sendMailChangePasswordConfirm } from "../../core/helpers/mail/sendMail.js";
+import Usuario from "../../core/model/Usuario.js";
 
 const registro = async (req, res) => {
     try {
