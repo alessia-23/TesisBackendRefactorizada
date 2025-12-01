@@ -25,7 +25,7 @@ const sendMailToRecoveryPassword = (userMail, token) => {
             <h1>PetConnect  - Recuperación de Contraseña</h1>
             <p>Has solicitado restablecer tu contraseña.</p>
             <p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
-            <a href="${process.env.URL_FRONTEND}recuperarpassword/${token}">
+            <a href="${process.env.URL_FRONTEND}/restore-password/${token}">
                 Restablecer mi contraseña
             </a>
             <hr>
