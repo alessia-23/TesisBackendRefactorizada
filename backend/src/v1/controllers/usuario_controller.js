@@ -39,26 +39,36 @@ const registro = async (req, res) => {
     }
 };
 
+/**
+ * @desc Confirma el correo electrónico del usuario usando un token.
+ * @route GET /api/auth/confirmarMail/:token
+ * @access Public
+ */
 const confirmarMail = async (req, res) => {
+    // 1. Obtener el token de la URL
+    const { token } = req.params;
+
     try {
-        const { token } = req.params
-        const UsuarioBDD = await Usuario.findOne({ token })
+        // 2. Buscar al usuario con ese token
+        const UsuarioBDD = await Usuario.findOne({ token });
 
         if (!UsuarioBDD) {
-            return res.status(404).json({ msg: "Token inválido o cuenta ya confirmada" })
+            const error = new Error("Token inválido o cuenta ya confirmada");
+            return res.status(404).json({ msg: error.message });
         }
 
-        UsuarioBDD.token = null
-        UsuarioBDD.confirmEmail = true
-        UsuarioBDD.status = true
-        await UsuarioBDD.save()
+        // 3. Si existe, confirmar la cuenta y limpiar el token
+        UsuarioBDD.token = null; // El token es de un solo uso
+        UsuarioBDD.confirmEmail = true;
+        UsuarioBDD.status = true; // Asumiendo que 'status' indica que la cuenta está activa
+        await UsuarioBDD.save();
 
-        res.status(200).json({ msg: "Cuenta confirmada, ya puedes iniciar sesión" })
+        res.status(200).json({ msg: "Cuenta confirmada, ya puedes iniciar sesión" });
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ msg: `Error en el servidor - ${error}` })
+        console.error("Error en confirmarMail:", error);
+        res.status(500).json({ msg: `Error en el servidor al confirmar la cuenta: ${error.message}` });
     }
-}
+};
 const recuperarPassword = async (req, res) => {
 
     try {
