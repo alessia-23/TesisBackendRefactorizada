@@ -41,24 +41,42 @@ const registro = async (req, res) => {
 
 const confirmarMail = async (req, res) => {
     try {
-        const { token } = req.params
-        const UsuarioBDD = await Usuario.findOne({ token })
+        const { token } = req.params;
 
-        if (!UsuarioBDD) {
-            return res.status(404).json({ msg: "Token inválido o cuenta ya confirmada" })
+        // Validar que realmente venga un token
+        if (!token) {
+            return res.status(400).json({ msg: "Token no proporcionado" });
         }
 
-        UsuarioBDD.token = null
-        UsuarioBDD.confirmEmail = true
-        UsuarioBDD.status = true
-        await UsuarioBDD.save()
+        // Buscar usuario por token, pero asegurarte que no esté confirmado
+        const usuario = await Usuario.findOne({ token, confirmEmail: false });
 
-        res.status(200).json({ msg: "Cuenta confirmada, ya puedes iniciar sesión" })
+        if (!usuario) {
+            return res.status(404).json({
+                msg: "Token inválido, expirado o la cuenta ya fue confirmada"
+            });
+        }
+
+        // Actualizar usuario
+        usuario.token = null;
+        usuario.confirmEmail = true;
+        usuario.status = true;
+
+        await usuario.save();
+
+        return res.status(200).json({
+            msg: "Cuenta confirmada correctamente. Ya puedes iniciar sesión."
+        });
+
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ msg: `Error en el servidor - ${error}` })
+        console.error("Error confirmando email:", error);
+        return res.status(500).json({
+            msg: "Error interno del servidor"
+        });
     }
-}
+};
+
+
 const recuperarPassword = async (req, res) => {
 
     try {
