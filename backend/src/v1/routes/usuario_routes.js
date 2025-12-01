@@ -150,15 +150,24 @@ router.post("/login", login)
  * @swagger
  * /auth/perfil:
  *   get:
- *     summary: Obtener perfil del usuario autenticado
+ *     summary: Obtener el perfil del usuario autenticado
  *     tags: [Usuarios]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Datos del perfil
+ *         description: Datos del perfil del usuario autenticado
+ *       400:
+ *         description: Error en la solicitud
+ *       401:
+ *         description: Token inválido o ausente
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error interno del servidor
  */
-router.get("/perfil/:id", verificarTokenJWT, perfil)
+router.get("/perfil", verificarTokenJWT, perfil)
+
 
 /**
  * @swagger

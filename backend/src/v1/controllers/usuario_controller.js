@@ -156,15 +156,14 @@ const login = async (req, res) => {
 
 const perfil = async (req, res) => {
     try {
-        const { id } = req.params
-        const UsuarioBDD = await Usuario.findOne({ id }).select("-status -__v -token -password -confirmEmail -updatedAt -createdAt")
-        if (!UsuarioBDD) return res.status(404).json({ msg: "El usuario no se encuentra registrado" })
-        res.status(200).json(UsuarioBDD);
+        const { token, confirmEmail, createdAt, updatedAt, __v, ...datosPerfil } = req.UsuarioHeader
+        res.status(200).json(datosPerfil)
     } catch (error) {
-        console.error(error)
         res.status(500).json({ msg: `❌ Error en el servidor - ${error}` })
+
     }
 }
+
 
 
 const actualizarPerfil = async (req, res) => {
