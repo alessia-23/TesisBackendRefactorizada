@@ -57,9 +57,9 @@ const confirmarMail = async (req, res) => {
         }
 
         // Buscar usuario por token, pero asegurarte que no esté confirmado
-        const usuario = await Usuario.findOne({ token, confirmEmail: false });
+        const usuario = await Usuario.findOne({ token });
 
-        if (!usuario) {
+        if (!usuario && usuario.confirmEmail == false) {
             return res.status(404).json({
                 msg: "Token inválido, expirado o la cuenta ya fue confirmada"
             });
