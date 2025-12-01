@@ -53,7 +53,7 @@ router.post("/sign-up", registro)
  *       200:
  *         description: Cuenta confirmada correctamente
  */
-router.post("/confirm-email/:token", confirmarMail)
+router.post("/confirm/:token", confirmarMail)
 
 /**
  * @swagger

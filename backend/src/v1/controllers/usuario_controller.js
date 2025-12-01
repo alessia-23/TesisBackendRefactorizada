@@ -39,7 +39,15 @@ const registro = async (req, res) => {
     }
 };
 
+/**
+ * @desc Confirma el correo electrónico del usuario usando un token.
+ * @route GET /api/auth/confirmarMail/:token
+ * @access Public
+ */
 const confirmarMail = async (req, res) => {
+    // 1. Obtener el token de la URL
+    const { token } = req.params;
+
     try {
         const { token } = req.params;
 
