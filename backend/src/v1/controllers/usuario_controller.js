@@ -45,9 +45,6 @@ const registro = async (req, res) => {
  * @access Public
  */
 const confirmarMail = async (req, res) => {
-    // 1. Obtener el token de la URL
-    const { token } = req.params;
-
     try {
         const { token } = req.params;
 
@@ -56,12 +53,20 @@ const confirmarMail = async (req, res) => {
             return res.status(400).json({ msg: "Token no proporcionado" });
         }
 
-        // Buscar usuario por token, pero asegurarte que no esté confirmado
+        // Buscar usuario por token
         const usuario = await Usuario.findOne({ token });
 
-        if (!usuario && usuario.confirmEmail == false) {
+        // Si NO existe el usuario → token inválido
+        if (!usuario) {
             return res.status(404).json({
-                msg: "Token inválido, expirado o la cuenta ya fue confirmada"
+                msg: "Token inválido o expirado"
+            });
+        }
+
+        // Si la cuenta ya está confirmada
+        if (usuario.confirmEmail === true) {
+            return res.status(400).json({
+                msg: "La cuenta ya fue confirmada anteriormente"
             });
         }
 
