@@ -156,33 +156,27 @@ const cambiarPassword = async (req, res) => {
 }
 
 const login = async (req, res) => {
-
     try {
-        const { email, password } = req.body
-        if (Object.values(req.body).includes("")) return res.status(404).json({ msg: "Debes llenar todos los campos" })
-        const UsuarioBDD = await Usuario.findOne({ email }).select("-status -__v -token -updatedAt -createdAt")
-        if (!UsuarioBDD) return res.status(404).json({ msg: "El usuario no se encuentra registrado" })
-        if (!UsuarioBDD.confirmEmail) return res.status(403).json({ msg: "Debes verificar tu cuenta antes de iniciar sesión" })
-        const verificarPassword = await UsuarioBDD.matchPassword(password)
-        if (!verificarPassword) return res.status(401).json({ msg: "El password no es correcto" })
-        const { nombre, apellido, direccion, telefono, _id, rol } = UsuarioBDD
-        const token = crearTokenJWT(UsuarioBDD._id, UsuarioBDD.rol, UsuarioBDD.email)
-        res.status(200).json({
-            token,
-            rol,
-            nombre,
-            apellido,
-            direccion,
-            telefono,
-            _id,
-            email: UsuarioBDD.email
-        })
+        const { email, password } = req.body;
+        if (!email || !password) return res.status(400).json({ msg: "Debes llenar todos los campos" });
 
+        const usuario = await Usuario.findOne({ email }).select("-status -__v -token -updatedAt -createdAt");
+        if (!usuario) return res.status(404).json({ msg: "El usuario no se encuentra registrado" });
+        if (!usuario.confirmEmail) return res.status(403).json({ msg: "Debes verificar tu cuenta antes de iniciar sesión" });
+
+        const verificarPassword = await usuario.matchPassword(password);
+        if (!verificarPassword) return res.status(401).json({ msg: "El password no es correcto" });
+
+        const { nombre, apellido, direccion, celular, _id, rol } = usuario;
+        const token = crearTokenJWT(_id, rol, email);
+
+        res.status(200).json({ token, rol, nombre, apellido, direccion, celular, _id, email });
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ msg: `❌ Error en el servidor - ${error}` })
+        console.error(error);
+        res.status(500).json({ msg: `Error en el servidor - ${error}` });
     }
-}
+};
+
 
 
 const perfil = async (req, res) => {
