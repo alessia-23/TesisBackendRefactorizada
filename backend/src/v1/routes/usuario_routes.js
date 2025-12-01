@@ -1,4 +1,5 @@
-import { registro, confirmarMail, recuperarPassword, comprobarTokenPassword, cambiarPassword, login } from "../controllers/usuario_controller.js"
+import { registro, confirmarMail, recuperarPassword, comprobarTokenPassword, cambiarPassword, login, perfil,actualizarPerfil, actualizarPassword } from "../controllers/usuario_controller.js"
+import { verificarTokenJWT } from "../../core/middleware/JWT.js"
 import { Router } from "express"
 
 const router = Router()
@@ -11,6 +12,17 @@ router.post("/confirm-email/:token", confirmarMail)
 router.post("/restore-password", recuperarPassword)
 router.post("/restore-password/:token", comprobarTokenPassword)
 router.post("/change-password/:token", cambiarPassword)
+
+// Login del usuario
 router.post("/login", login)
+
+// Pefil de usuario 
+router.get("/perfil",verificarTokenJWT,perfil)
+
+// Actualizar perfil
+router.put("/actualizar-perfil/:id", verificarTokenJWT, actualizarPerfil)
+
+//Actualizar contraseñas
+router.put("/actualizar-password/:id", verificarTokenJWT, actualizarPassword)
 
 export default router

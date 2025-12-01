@@ -1,6 +1,7 @@
 import { sendMailToRegister, sendMailToRecoveryPassword, sendMailChangePasswordConfirm } from "../../core/helpers/mail/sendMail.js";
 import { crearTokenJWT } from "../../core/middleware/JWT.js";
 import Usuario from "../../core/model/Usuario.js";
+import mongoose from "mongoose"; // Para poder realizar la actualización del perfil 
 
 const registro = async (req, res) => {
     try {
@@ -152,5 +153,59 @@ const login = async (req, res) => {
     }
 }
 
+
+const perfil = (req, res) => {
+    try {
+        const { token, confirmEmail, createdAt, updatedAt, __v, ...datosPerfil } = req.UsuarioHeader;
+        res.status(200).json(datosPerfil);
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ msg: `❌ Error en el servidor - ${error}` })
+    }
+}
+
+
+const actualizarPerfil = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { nombre, apellido, direccion, celular } = req.body
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ msg: `ID inválido: ${id}` })
+        const UsuarioBDD = await Usuario.findById(id)
+        if (!UsuarioBDD) return res.status(404).json({ msg: `No existe el usuario con ID ${id}` })
+        if (Object.values(req.body).includes("")) return res.status(400).json({ msg: "Debes llenar todos los campos" })
+        UsuarioBDD.nombre = nombre ?? UsuarioBDD.nombre
+        UsuarioBDD.apellido = apellido ?? UsuarioBDD.apellido
+        UsuarioBDD.direccion = direccion ?? UsuarioBDD.direccion
+        UsuarioBDD.celular = celular ?? UsuarioBDD.celular
+        await UsuarioBDD.save()
+        res.status(200).json(UsuarioBDD)
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ msg: `❌ Error en el servidor - ${error}` })
+    }
+}
+
+
+const actualizarPassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { passwordactual, passwordnuevo } = req.body;
+        const UsuarioBDD = await Usuario.findById(id);
+        if (!UsuarioBDD)
+            return res.status(404).json({ msg: `Lo sentimos, no existe el usuario ${id}` });
+        const verificarPassword = await UsuarioBDD.matchPassword(passwordactual);
+        if (!verificarPassword)
+            return res.status(400).json({ msg: "El password actual no es correcto" });
+        UsuarioBDD.password = await UsuarioBDD.encryptPassword(passwordnuevo);
+        await UsuarioBDD.save();
+        res.status(200).json({ msg: "Password actualizado correctamente" });
+    } catch (error) {
+        res.status(500).json({ msg: `❌ Error en el servidor - ${error}` });
+    }
+};
+
+
+
 // EXPORTACIONES
-export { registro, confirmarMail, recuperarPassword, comprobarTokenPassword, cambiarPassword, login };
+export { registro, confirmarMail, recuperarPassword, comprobarTokenPassword, cambiarPassword, login, perfil, actualizarPerfil, actualizarPassword };
