@@ -12,7 +12,7 @@ const ownerSchema = new Schema({
     password: { type: String, required: true },
     token: { type: String, default: null },
     status: { type: Boolean, default: false },
-    confirmEmail: { type: Boolean, default: true },
+    confirmEmail: { type: Boolean, default: false },
     rol: { type: String, default: "Dueño" }
 
 }, { timestamps: true })
