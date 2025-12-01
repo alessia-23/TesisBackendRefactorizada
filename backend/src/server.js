@@ -4,7 +4,6 @@ import cors from 'cors'
 import usuarioRoutes from './v1/routes/usuario_routes.js'
 import avatarRoutes from './v1/routes/avatar_routes.js'
 import dogsRoutes from './v1/routes/dog_fact_routes.js'
-import { informacion } from './v1/controllers/info_controller.js';
 
 
 // Inicializaciones
@@ -19,7 +18,7 @@ app.use(cors())
 app.set('port', process.env.PORT || 3000)
 
 // Rutas
-app.use("/", informacion)
+app.get('/',(req,res)=>res.send("Server on - App Mascotas"))
 app.use("/api/v1", avatarRoutes)
 app.use("/api/v1/auth", usuarioRoutes)
 app.use("/api/v1", dogsRoutes)
