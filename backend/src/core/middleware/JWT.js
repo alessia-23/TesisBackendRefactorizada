@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import Usuario from "../model/Usuario.js"
-
+import Cuidador from "../model/Cuidador.js"
 
 /**
  * Crear token JWT
@@ -30,6 +30,11 @@ const verificarTokenJWT = async (req, res, next) => {
                 next()
                 break;
             case "Dueño":
+                if (!UsuarioBDD) return res.status(401).json({ msg: "Usuario no encontrado" })
+                req.UsuarioHeader = UsuarioBDD
+                next()
+                break;
+            case "Cuidador":
                 if (!UsuarioBDD) return res.status(401).json({ msg: "Usuario no encontrado" })
                 req.UsuarioHeader = UsuarioBDD
                 next()

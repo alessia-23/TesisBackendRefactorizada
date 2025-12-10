@@ -46,8 +46,32 @@ const sendMailChangePasswordConfirm = (userMail) => {
     )
 }
 
+
+const sendMailToCuidador = (userMail, password) => {
+    return sendMail(
+        userMail,
+        "Registro de Cuidador - SMARTVET 🐾",
+        `
+            <h1>Bienvenido a SMARTVET</h1>
+            <p>Has sido registrado como <strong>Cuidador</strong> en nuestro sistema.</p>
+
+            <p>Estas son tus credenciales de acceso:</p>
+            <p><strong>Correo:</strong> ${userMail}</p>
+            <p><strong>Contraseña:</strong> ${password}</p>
+
+            <p>Puedes iniciar sesión utilizando el siguiente enlace:</p>
+            <a href="${process.env.URL_BACKEND}/login">Iniciar sesión</a>
+
+            <hr>
+            <footer>SMARTVET agradece tu compromiso y dedicación.</footer>
+        `
+    )
+}
+
+
 export {
     sendMailToRegister,
     sendMailToRecoveryPassword,
-    sendMailChangePasswordConfirm
+    sendMailChangePasswordConfirm,
+    sendMailToCuidador
 }

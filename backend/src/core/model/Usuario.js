@@ -13,7 +13,8 @@ const ownerSchema = new Schema({
     token: { type: String, default: null },
     status: { type: Boolean, default: false },
     confirmEmail: { type: Boolean, default: false },
-    rol: { type: String, default: "Dueño" }
+    rol: { type: String, default: "Dueño" |""},
+    photo: { type: String, default:""}
 
 }, { timestamps: true })
 
